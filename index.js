@@ -18,7 +18,7 @@ function getNowTime() {
 function getMsUntilStartHour() {
   const now = new Date();
   const start = new Date();
-  start.setUTCHours(START_HOUR - 7, 0, 0, 0); // Giờ VN = UTC+7
+  start.setUTCHours(START_HOUR - 7, 0, 0, 0); // giờ VN = UTC+7
   if (now > start) start.setDate(start.getDate() + 1);
   return start - now;
 }
@@ -46,14 +46,17 @@ function getMsUntilStartHour() {
         timeout: 60000
       });
 
-      // ✅ Chờ thẻ a hoặc button xuất hiện
+      // ✅ Chờ tối đa 10s để đảm bảo trang có nút
       await page.waitForSelector('a, button', { timeout: 10000 });
 
       const clickable = await page.$('a, button');
       if (clickable) {
-        // 👉 Lấy ID phần tử nếu có
-        const id = await page.evaluate(el => el.id || '(không có ID)', clickable);
-        console.log(`ℹ️ ID phần tử được click: ${id}`);
+        try {
+          const id = await page.evaluate(el => el?.id ?? '(không có ID)', clickable);
+          console.log(`ℹ️ ID phần tử được click: ${id}`);
+        } catch (err) {
+          console.log(`⚠️ Không lấy được ID phần tử: ${err.message}`);
+        }
 
         await clickable.click();
         console.log(`✅ Click thành công tại lượt ${i + 1}`);
