@@ -1,8 +1,5 @@
-services:
-  - type: worker
-    name: shophoadatviet-puppeteer
-    runtime: node
-    buildCommand: "npm install"
-    startCommand: "npm start"
+cron:
+  - name: shophoadatviet-cron
+    schedule: "0 18 * * *"
+    command: "node index.js"
     plan: free
-    autoDeploy: false
