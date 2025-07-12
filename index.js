@@ -4,7 +4,7 @@ const puppeteer = require('puppeteer');
 const TOTAL_VISITS = 3000;
 const DELAY_BETWEEN_VISITS = 5000; // 5s giữa mỗi lần truy cập
 const CLICK_DELAY = 3000; // giữ trang 3s trước khi đóng
-const START_HOUR = 1; // 2:00AM giờ VN
+const START_HOUR = 2; // 2:00AM giờ VN
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -18,7 +18,7 @@ function getNowTime() {
 function getMsUntilStartHour() {
   const now = new Date();
   const start = new Date();
-  start.setHours(START_HOUR - 7, 0, 0, 0); // -7 vì UTC (Railway dùng UTC)
+  start.setUTCHours(START_HOUR - 7, 0, 0, 0); // Giờ VN = UTC+7
   if (now > start) start.setDate(start.getDate() + 1);
   return start - now;
 }
@@ -26,7 +26,7 @@ function getMsUntilStartHour() {
 (async () => {
   const msUntilStart = getMsUntilStartHour();
   console.log(`🕑 Hiện tại là ${getNowTime()}`);
-  console.log(`⏳ Đang chờ đến 2:00AM giờ Việt Nam để bắt đầu... (${msUntilStart / 1000}s)`);
+  console.log(`⏳ Đang chờ đến 2:00AM giờ Việt Nam để bắt đầu... (${Math.floor(msUntilStart / 1000)}s)`);
 
   await sleep(msUntilStart);
 
@@ -46,11 +46,15 @@ function getMsUntilStartHour() {
         timeout: 60000
       });
 
-      // ✅ Chờ tối đa 10s để phần tử có thể xuất hiện
+      // ✅ Chờ thẻ a hoặc button xuất hiện
       await page.waitForSelector('a, button', { timeout: 10000 });
 
       const clickable = await page.$('a, button');
       if (clickable) {
+        // 👉 Lấy ID phần tử nếu có
+        const id = await page.evaluate(el => el.id || '(không có ID)', clickable);
+        console.log(`ℹ️ ID phần tử được click: ${id}`);
+
         await clickable.click();
         console.log(`✅ Click thành công tại lượt ${i + 1}`);
       } else {
