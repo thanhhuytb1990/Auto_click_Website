@@ -1,0 +1,12 @@
+{
+  "name": "shophoadatviet-puppeteer",
+  "version": "1.0.0",
+  "description": "Truy cập website như người thật mỗi 5s",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "puppeteer": "^21.3.8"
+  }
+}
