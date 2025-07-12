@@ -1,7 +1,7 @@
 {
-  "name": "shophoadatviet-puppeteer",
+  "name": "shophoadatviet-cron",
   "version": "1.0.0",
-  "description": "Truy cập website như người thật mỗi 5s",
+  "description": "Tự động truy cập shophoadatviet.com với Puppeteer",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
