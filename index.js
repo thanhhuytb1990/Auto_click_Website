@@ -1,10 +1,10 @@
 const puppeteer = require('puppeteer');
 
-// 👉 Config
+// 👉 Cấu hình
 const TOTAL_VISITS = 3000;
-const DELAY_BETWEEN_VISITS = 5000; // ms
-const CLICK_DELAY = 3000; // giữ trang 3s
-const START_HOUR = 1;
+const DELAY_BETWEEN_VISITS = 5000; // 5s giữa mỗi lần truy cập
+const CLICK_DELAY = 3000; // giữ trang 3s trước khi đóng
+const START_HOUR = 1; // 2:00AM giờ VN
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -18,20 +18,15 @@ function getNowTime() {
 function getMsUntilStartHour() {
   const now = new Date();
   const start = new Date();
-  start.setHours(START_HOUR, 0, 0, 0);
-
-  if (now > start) {
-    // Nếu đã qua 2:00 hôm nay → lên lịch ngày mai
-    start.setDate(start.getDate() + 1);
-  }
-
+  start.setHours(START_HOUR - 7, 0, 0, 0); // -7 vì UTC (Railway dùng UTC)
+  if (now > start) start.setDate(start.getDate() + 1);
   return start - now;
 }
 
 (async () => {
   const msUntilStart = getMsUntilStartHour();
   console.log(`🕑 Hiện tại là ${getNowTime()}`);
-  console.log(`⏳ Đang chờ đến 2:00 AM để bắt đầu... (${msUntilStart / 1000}s)`);
+  console.log(`⏳ Đang chờ đến 2:00AM giờ Việt Nam để bắt đầu... (${msUntilStart / 1000}s)`);
 
   await sleep(msUntilStart);
 
@@ -44,17 +39,25 @@ function getMsUntilStartHour() {
     });
 
     const page = await browser.newPage();
-    await page.goto('https://shophoadatviet.com', {
-      waitUntil: 'networkidle2',
-      timeout: 60000
-    });
 
-    // 👉 Thực hiện click (ví dụ: click vào phần tử đầu tiên có class .btn hoặc tương tự)
     try {
-      await page.click('a, button'); // bạn có thể thay bằng selector cụ thể nếu muốn
-      console.log(`✅ Click thành công tại lượt ${i + 1}`);
+      await page.goto('https://shophoadatviet.com', {
+        waitUntil: 'networkidle2',
+        timeout: 60000
+      });
+
+      // ✅ Chờ tối đa 10s để phần tử có thể xuất hiện
+      await page.waitForSelector('a, button', { timeout: 10000 });
+
+      const clickable = await page.$('a, button');
+      if (clickable) {
+        await clickable.click();
+        console.log(`✅ Click thành công tại lượt ${i + 1}`);
+      } else {
+        console.log(`⚠️ Không tìm thấy phần tử để click tại lượt ${i + 1}`);
+      }
     } catch (e) {
-      console.log(`⚠️ Không click được tại lượt ${i + 1} - không tìm thấy phần tử`);
+      console.log(`❌ Lỗi tại lượt ${i + 1}: ${e.message}`);
     }
 
     await sleep(CLICK_DELAY);
@@ -66,5 +69,5 @@ function getMsUntilStartHour() {
     }
   }
 
-  console.log('✅ Hoàn tất 3000 lượt truy cập!');
+  console.log('🎉 Hoàn tất 3000 lượt truy cập!');
 })();
