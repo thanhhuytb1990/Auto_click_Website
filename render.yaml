@@ -1,7 +1,7 @@
 services:
   - type: cron
     name: auto-click-job
-    schedule: "0 19 * * *"  # Giờ UTC = 2AM VN
+    schedule: "0 18 * * *"  # Giờ UTC = 2AM VN
     runtime: node
     buildCommand: yarn install
     startCommand: node index.js
