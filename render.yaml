@@ -1,5 +1,7 @@
-cron:
-  - name: shophoadatviet-cron
-    schedule: "0 18 * * *"
-    command: "node index.js"
+services:
+  - type: web
+    name: puppeteer-visit
+    env: node
     plan: free
+    buildCommand: npm install
+    startCommand: npm start
