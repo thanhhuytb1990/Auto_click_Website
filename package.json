@@ -1,13 +1,14 @@
 {
   "name": "puppeteer-visit-web",
   "version": "1.0.0",
-  "description": "Tự động truy cập shophoadatviet.com bằng Puppeteer",
+  "description": "Auto click website bằng Puppeteer",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
+  "author": "thanhhuytb1990",
+  "license": "MIT",
   "dependencies": {
-    "chrome-aws-lambda": "^10.1.0",
-    "puppeteer-core": "^22.8.2"
+    "puppeteer": "^20.9.0"
   }
 }
