@@ -1,7 +1,6 @@
 const chromium = require("chrome-aws-lambda");
 const puppeteer = require("puppeteer-core");
 
-// 👉 Cấu hình
 const TOTAL_VISITS = 3000;
 const DELAY_BETWEEN_VISITS = 5000;
 const CLICK_DELAY = 3000;
@@ -19,7 +18,7 @@ function getNowTime() {
 function getMsUntilStartHour() {
   const now = new Date();
   const start = new Date();
-  start.setUTCHours(START_HOUR - 7, 0, 0, 0); // Giờ VN = UTC+7
+  start.setUTCHours(START_HOUR - 7, 0, 0, 0); // VN time = UTC+7
   if (now > start) start.setDate(start.getDate() + 1);
   return start - now;
 }
@@ -32,10 +31,12 @@ function getMsUntilStartHour() {
   await sleep(msUntilStart);
   console.log(`🚀 Bắt đầu truy cập lúc ${getNowTime()}`);
 
+  const executablePath = await chromium.executablePath || "/usr/bin/chromium-browser";
+
   for (let i = 0; i < TOTAL_VISITS; i++) {
     const browser = await puppeteer.launch({
       args: chromium.args,
-      executablePath: await chromium.executablePath,
+      executablePath,
       headless: chromium.headless,
     });
 
@@ -44,7 +45,7 @@ function getMsUntilStartHour() {
     try {
       await page.goto("https://shophoadatviet.com", {
         waitUntil: "networkidle2",
-        timeout: 60000
+        timeout: 60000,
       });
 
       await page.waitForSelector("a, button", { timeout: 10000 });
