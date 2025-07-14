@@ -1,13 +1,13 @@
 {
   "name": "puppeteer-visit-web",
   "version": "1.0.0",
-  "description": "Auto click website",
   "main": "index.js",
+  "type": "commonjs",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
-    "puppeteer-core": "^22.8.2",
+    "puppeteer-core": "^10.1.0",
     "chrome-aws-lambda": "^10.1.0"
   }
 }
