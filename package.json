@@ -1,14 +1,13 @@
 {
   "name": "puppeteer-visit-web",
   "version": "1.0.0",
-  "description": "Auto click website bằng Puppeteer",
+  "description": "Auto click website",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
-  "author": "thanhhuytb1990",
-  "license": "MIT",
   "dependencies": {
-    "puppeteer": "^20.9.0"
+    "puppeteer-core": "^22.8.2",
+    "chrome-aws-lambda": "^10.1.0"
   }
 }
