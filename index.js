@@ -1,10 +1,11 @@
 const chromium = require("chrome-aws-lambda");
 const puppeteer = require("puppeteer-core");
 
-const TOTAL_VISITS = 3000;
-const DELAY_BETWEEN_VISITS = 5000;
-const CLICK_DELAY = 3000;
-const START_HOUR = 1;
+// 👉 Cấu hình
+const TOTAL_VISITS = 3; // Số lượt truy cập thử
+const DELAY_BETWEEN_VISITS = 5000; // 5s giữa mỗi lần truy cập
+const CLICK_DELAY = 3000; // giữ trang 3s trước khi đóng
+const START_HOUR = 1; // 1:00AM giờ VN (có thể chỉnh lại)
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -18,7 +19,7 @@ function getNowTime() {
 function getMsUntilStartHour() {
   const now = new Date();
   const start = new Date();
-  start.setUTCHours(START_HOUR - 7, 0, 0, 0); // VN time = UTC+7
+  start.setUTCHours(START_HOUR - 7, 0, 0, 0); // Giờ VN = UTC+7
   if (now > start) start.setDate(start.getDate() + 1);
   return start - now;
 }
@@ -26,17 +27,15 @@ function getMsUntilStartHour() {
 (async () => {
   const msUntilStart = getMsUntilStartHour();
   console.log(`🕑 Hiện tại là ${getNowTime()}`);
-  console.log(`⏳ Đang chờ đến 2:00AM giờ Việt Nam... (${Math.floor(msUntilStart / 1000)}s)`);
+  console.log(`⏳ Đang chờ đến ${START_HOUR}:00AM giờ Việt Nam... (${Math.floor(msUntilStart / 1000)}s)`);
 
   await sleep(msUntilStart);
   console.log(`🚀 Bắt đầu truy cập lúc ${getNowTime()}`);
 
-  const executablePath = await chromium.executablePath || "/usr/bin/chromium-browser";
-
   for (let i = 0; i < TOTAL_VISITS; i++) {
     const browser = await puppeteer.launch({
       args: chromium.args,
-      executablePath,
+      executablePath: await chromium.executablePath,
       headless: chromium.headless,
     });
 
@@ -45,7 +44,7 @@ function getMsUntilStartHour() {
     try {
       await page.goto("https://shophoadatviet.com", {
         waitUntil: "networkidle2",
-        timeout: 60000,
+        timeout: 60000
       });
 
       await page.waitForSelector("a, button", { timeout: 10000 });
@@ -72,5 +71,5 @@ function getMsUntilStartHour() {
     }
   }
 
-  console.log("🎉 Hoàn tất 3000 lượt truy cập!");
+  console.log("🎉 Hoàn tất lượt truy cập!");
 })();
