@@ -1,28 +1,23 @@
-name: Auto Click Website at 2AM VN
+name: Click Website
 
 on:
-  schedule:
-    - cron: '0 19 * * *'   # Lịch UTC → 19:00 UTC = 2:00AM VN
-  workflow_dispatch:        # Cho phép bạn chạy thủ công
+  workflow_dispatch:
 
 jobs:
   run-script:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Clone repository
+      - name: Checkout repo
         uses: actions/checkout@v3
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: 20
 
       - name: Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
 
-      - name: Run Puppeteer script
+      - name: Run script
         run: node index.js
-
-      - name: Done
-        run: echo "✅ Đã chạy xong script Puppeteer!"
