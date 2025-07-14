@@ -1,7 +1,8 @@
 services:
-  - type: web
-    name: puppeteer-visit
-    env: node
+  - type: cron
+    name: auto-click-job
+    schedule: "0 19 * * *"  # Giờ UTC = 2AM VN
+    runtime: node
+    buildCommand: yarn install
+    startCommand: node index.js
     plan: free
-    buildCommand: npm install
-    startCommand: npm start
